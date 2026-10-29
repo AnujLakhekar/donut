@@ -44,6 +44,25 @@ app.get("/v1/:style/:filename", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Avatar Generator API</title>
+        <style>body { font-family: sans-serif; text-align: center; padding: 2rem; }</style>
+      </head>
+      <body>
+        <h1>Avatar Generator API</h1>
+        <p>An open-source JavaScript avatar generation API.</p>
+        <h2>Usage Example</h2>
+        <code>GET /v1/bottts/eyeman.svg</code><br><br>
+        <img src="/v1/bottts/eyeman.svg" width="150" />
+      </body>
+    </html>
+  `);
+});
+
 app.listen(3000, () => {
   console.log("Avatar API running at http://localhost:3000");
 });
