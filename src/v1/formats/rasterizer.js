@@ -1,17 +1,6 @@
-// src/v1/formats/rasterizer.js
-import { Resvg, initWasm } from '@resvg/resvg-wasm';
-import resvgWasmModule from '@resvg/resvg-wasm/index_bg.wasm';
+import { Resvg } from "@resvg/resvg-js";
 
-let wasmInitialized = false;
-
-async function ensureWasmInitialized() {
-  if (!wasmInitialized) {
-    await initWasm(resvgWasmModule);
-    wasmInitialized = true;
-  }
-}
-
-export async function renderFormat(json, format = "svg", size = 256) {
+export function renderFormat(json, format = "svg", size = 256) {
   if (format === "json") {
     return {
       buffer: Buffer.from(JSON.stringify(json, null, 2)),
@@ -29,15 +18,10 @@ export async function renderFormat(json, format = "svg", size = 256) {
   }
 
   if (format === "png") {
-    // Initialize WASM before rendering
-    await ensureWasmInitialized();
-
     const resvg = new Resvg(svgString, {
       fitTo: { mode: "width", value: Number(size) },
     });
-    const pngData = resvg.render();
-    const pngBuffer = Buffer.from(pngData.asPng());
-
+    const pngBuffer = resvg.render().asPng();
     return { 
       buffer: pngBuffer, 
       mime: "image/png" 
