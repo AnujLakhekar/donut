@@ -1,38 +1,41 @@
 // server.js
 import express from 'express';
-import { generateAvatar } from './src/v1/generator.js';
 import { renderFormat } from './src/v1/formats/rasterizer.js';
+import { generateAvatar } from './src/v1/generator/generator.js';
 
 const app = express();
 
-// Route pattern: /v1/:style/:filename
-// Examples:
-//   GET /v1/bottts/john_doe.svg
-//   GET /v1/pixel/world.png?size=512&bg=FF0000
 app.get('/v1/:style/:filename', async (req, res) => {
   try {
     const { style, filename } = req.params;
 
-    // Split filename into seed and extension (e.g., "john.png" -> seed: "john", ext: "png")
-    const match = filename.match(/^(.+)\.(svg|png)$/i);
+    const match = filename.match(/^(.+)\.(svg|png|json)$/i);
     const seed = match ? match[1] : filename;
     const format = match ? match[2].toLowerCase() : 'svg';
 
-    // 1. Generate core SVG
-    const svg = generateAvatar({
+    // Parse options from query strings
+    // Express automatically parses ?topVariant[short01]=2 into req.query.topVariant
+    const avatarJson = generateAvatar({
       styleName: style,
       seed,
       options: {
         bg: req.query.bg ? `#${req.query.bg}` : undefined,
-        radius: req.query.radius,
+        radius: req.query.radius ? Number(req.query.radius) : undefined,
+        
+        // Transform options
+        flip: req.query.flip,                     // 'horizontal' | 'vertical' | 'both'
+        rotate: req.query.rotate ? Number(req.query.rotate) : 0,
+        scale: req.query.scale ? Number(req.query.scale) : 1,
+        translateY: req.query.translateY ? Number(req.query.translateY) : 0,
+        
+        // Variant weights object
+        topVariant: req.query.topVariant ? req.query.topVariant : undefined,
       },
     });
 
-    // 2. Convert to requested format and size
     const size = req.query.size || 256;
-    const { buffer, mime } = renderFormat(svg, format, size);
+    const { buffer, mime } = renderFormat(avatarJson, format, size);
 
-    // 3. Send response with caching
     res.setHeader('Content-Type', mime);
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     res.send(buffer);
