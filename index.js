@@ -1,7 +1,8 @@
 // server.js
 import express from "express";
 import cors from "cors"
-import ApiRoutes from "./src/routes/routes.js"
+import v1Router from "./src/routes/v1.router.js"
+import v2Router from "./src/routes/v2.router.js";
 
 
 const app = express();
@@ -11,8 +12,8 @@ app.use(cors())
 
 // routes
 
-app.use(ApiRoutes)
-
+app.use("/v1", v1Router);
+app.use("/v2", v2Router);
 
 export default app;
 
