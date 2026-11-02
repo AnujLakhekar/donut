@@ -3,12 +3,11 @@ import express from "express";
 import { renderFormat } from "../formats/rasterizer.js";
 import { generateAvatar } from "../v1/generators/AvatarGenerator.js";
 import { generateInitialsAvatar } from "../v1/generators/initialsGenerator.js";
-import { middleware } from "../middlewares/api.middleware.js";
 import { generateGlyphsAvatar } from "../v1/generators/glyphsGenerator.js";
 
 const v1Router = express.Router();
 
-v1Router.get("/:style/:filename", middleware, async (req, res) => {
+v1Router.get("/:style/:filename", async (req, res) => {
   try {
     const { style, filename } = req.params;
 

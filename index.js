@@ -7,22 +7,24 @@ import rateLimit from "express-rate-limit";
 
 const app = express();
 
-const avatar_rateLimit = rateLimit({
-    windowMs: 10 * 1000,
-    max: 5,
-    standardHeaders: true, // Return rate limit info in headers `RateLimit-*`
-    legacyHeaders: false, // Disable `X-RateLimit-*` headers
+const avatarLimiter = rateLimit({
+    windowMs: 10 * 1000, // 10 seconds
+    max: 5,              // Limit to 5 requests
+    standardHeaders: true,
+    legacyHeaders: false,
     message: {
         status: 429,
-        error: 'Too many avatar requests from this IP, please try again later.'
+        error: 'Too Many Requests',
+        message: 'Rate limit exceeded. Please wait.'
     }
-})
+});
 
 app.set('trust proxy', 1)
 app.use(express.json());
 app.use(cors())
-app.use("/v1", avatar_rateLimit);
-
+app.use('/v1', avatarLimiter);
+app.use('/v2', avatarLimiter);
+app.use('/avatar', avatarLimiter);
 // routes
 
 app.use("/v1", v1Router);
