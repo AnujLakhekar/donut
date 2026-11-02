@@ -17,9 +17,7 @@ app.use("/v2", v2Router);
 
 export default app;
 
-// Run local listener when not in production
-if (process.env.NODE_ENV !== "production") {
-  app.listen(3000, () => {
-    console.log("Avatar API running at http://localhost:3000");
-  });
-}
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Avatar API running on port ${PORT}`);
+});
