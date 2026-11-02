@@ -4,6 +4,7 @@ import { renderFormat } from "../formats/rasterizer.js";
 import { generateShapesAvatar } from "../v1/generators/shapesGenerator.js";
 import { generatePanesAvatar } from "../v1/generators/panesGenerator.js";
 import { generateAnimatedShapesFrames } from "../v2/generater/animatedShapesGenerator.js";
+import { generateAnimatedGlyphsFrames } from "../v2/generater/animatedGlyphsGenerator.js";
 import { middleware } from "../middlewares/api.middleware.js";
 import { generateGlyphsAvatar } from "../v1/generators/glyphsGenerator.js";
 
